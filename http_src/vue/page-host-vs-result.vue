@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4">{{ title }}</div>
+  <div class="mb-4" v-html="title_html"></div>
     <div class="row">
       <div class="col-md-12 col-lg-12">
         <div class="card  card-shadow">
@@ -24,6 +24,7 @@ const props = defineProps({
 }); 
 const message = ref('');
 const message_html = ref('');
+const title_html = ref('');
 
 const title = ref('');
 const my_array = ref([]);
@@ -44,8 +45,10 @@ async function get_result(host, scan_type, date) {
   let result = await ntopng_utility.http_request(url);
   message.value = result.rsp;
   message_html.value = `<pre>${message.value}</pre>`;
-  title.value = i18n("hosts_stats.page_scan_hosts.vs_result").replace("%{host}", host);
+  const host_href = `<a href="${http_prefix}/lua/host_details.lua?host=${host}">${host}</a>`;
+  title.value = i18n("hosts_stats.page_scan_hosts.vs_result").replace("%{host}", host_href);
   title.value = title.value.replace("%{date}",date);
+  title_html.value = title.value;
 
 }
 

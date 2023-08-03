@@ -9,8 +9,10 @@ require "lua_utils"
 local rest_utils = require "rest_utils"
 local vs_utils = require "vs_utils"
 
-local function retrieve_host() 
-    return vs_utils.retrieve_hosts_to_scan()
+local host = _GET["host"]
+
+local function retrieve_host(host) 
+    return vs_utils.retrieve_hosts_to_scan(host)
 end
 
-rest_utils.answer(rest_utils.consts.success.ok, retrieve_host())
+rest_utils.answer(rest_utils.consts.success.ok, retrieve_host(host))

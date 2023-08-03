@@ -4,12 +4,15 @@
 local dirs = ntop.getDirs()
 package.path = dirs.installdir .. "/scripts/lua/modules/?.lua;" .. package.path
 package.path = dirs.installdir .. "/scripts/lua/modules/pools/?.lua;" .. package.path
+package.path = dirs.installdir .. "/scripts/lua/modules/vulnerability_scan/?.lua;" .. package.path
 
 local snmp_utils
 local snmp_location
 local host_sites_update
 local sites_granularities = {}
 local auth = require "auth"
+
+local vs_utils = require "vs_utils"
 
 if (ntop.isPro()) then
     package.path = dirs.installdir .. "/pro/scripts/lua/modules/?.lua;" .. package.path
@@ -1313,6 +1316,18 @@ else
             print(
                 "<tr><th><A class='ntopng-external-link' href='https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol'>SSDP (UPnP)<i class=\"fas fa-external-link-alt fa-lg\"></i></A></th><td colspan=2> <A HREF='" ..
                     host["ssdp"] .. "'>" .. host["ssdp"] .. "<A></td></tr>\n")
+        end
+
+        local host_vs_details = vs_utils.retrieve_hosts_to_scan(host["ip"])
+
+        if host_vs_details and host_vs_details.num_vulnerabilities_found > 0 then
+            print("<tr><th>" .. i18n("hosts_stats.page_scan_hosts.num_vulnerabilities_found") .. "</th><td><span id=pkts_sent>")
+            
+            for _,vs in ipairs(cve) do
+                print(vs)
+            end
+
+            print("<tr><th colspan=4></th></tr>\n")
         end
 
         print("</table>\n")
